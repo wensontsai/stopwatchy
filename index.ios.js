@@ -47,7 +47,7 @@ var StopWatch = React.createClass({
       <TouchableHighlight 
         underlayColor="gray" 
         onPress={this.handleStartPress}
-        style={styles.button}
+        style={ [styles.button, styles.startButton] }
         >
         <Text>
           Start button
@@ -69,10 +69,10 @@ var StopWatch = React.createClass({
     )
   },
   border: function(color){
-    return{
-      borderColor: color,
-      borderWidth: 4
-    }
+    // return{
+    //   borderColor: color,
+    //   borderWidth: 4
+    // }
   },
   handleStartPress: function(){
     var startTime = new Date();
@@ -86,8 +86,12 @@ var StopWatch = React.createClass({
     }, 30);
   },
   handleLapPress: function(){
+    this.recordLap(this.timeElapsed);
+  },
+  recordLap: function(time){
 
   }
+
 });
 
 var styles = StyleSheet.create({
@@ -119,6 +123,17 @@ var styles = StyleSheet.create({
   },
   timer: {
     fontSize: 60
+  },
+  button: {
+    borderWidth: 2,
+    height: 100,
+    width: 100,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  startButton: {
+    borderColor: 'green'
   }
 
 });

@@ -17,7 +17,11 @@ var {
 var StopWatch = React.createClass({ 
   getInitialState: function(){
     return {
-      timeElapsed: null
+      timeElapsed: null,
+      running: null,
+      startTime: null,
+      lapNumber: 1,
+      laps: []
     }
   },
   render: function(){
@@ -35,22 +39,22 @@ var StopWatch = React.createClass({
             </View>
           </View>
           <View style={ [styles.footer, this.border('blue')] }> 
-            <Text>
-              list of Laps
-            </Text>
+              {this.laps()}
             </View>
         </View>
     )
   },
   startStopButton: function(){
+    var style = this.state.running ? styles.stopButton : styles.startButton;
+
     return(
       <TouchableHighlight 
         underlayColor="gray" 
         onPress={this.handleStartPress}
-        style={ [styles.button, styles.startButton] }
+        style={ [styles.button, style] }
         >
         <Text>
-          Start button
+          {this.state.running ? 'Stop' : 'Start'}
         </Text>
       </TouchableHighlight>
     )
@@ -63,7 +67,7 @@ var StopWatch = React.createClass({
         style={styles.button}
         >
         <Text>
-          Lap button
+          Lap {this.state.lapNumber ? this.state.lapNumber : ''}
         </Text>
       </TouchableHighlight>
     )
@@ -75,21 +79,55 @@ var StopWatch = React.createClass({
     // }
   },
   handleStartPress: function(){
-    var startTime = new Date();
+    if(this.state.running){
+      clearInterval(this.interval);
+      this.setState({
+        running: false,
+        lapNumber: null
+      });
+
+      return; 
+    }
+
+    this.setState({startTime: new Date() });
     
-    setInterval( () => {
+    this.interval = setInterval( () => {
       // only set values in state with setState
       // never declare as 'this.state.variable = new value' <= antipattern!
       this.setState({
-        timeElapsed: new Date() - startTime
+        timeElapsed: new Date() - this.state.startTime,
+        running: true
       });
     }, 30);
   },
   handleLapPress: function(){
-    this.recordLap(this.timeElapsed);
-  },
-  recordLap: function(time){
+    var lap = this.state.timeElapsed;
+    this.state.lapNumber++;
+    this.setState({
+      lapNumber: this.state.lapNumber,
+      laps: this.state.laps.concat([lap])
+    })
 
+    // //resets counter to 00:00 
+    // this.setState({
+    //   startTime: new Date();
+    // });
+  },
+  laps: function(){
+    return(
+      this.state.laps.map(function(time, index){
+        return (
+          <View>
+            <Text>
+              Lap #{index + 1}
+            </Text>
+            <Text>
+              {formatTime(time)}
+            </Text>
+          </View>
+        )
+      })
+    )
   }
 
 });
@@ -134,6 +172,9 @@ var styles = StyleSheet.create({
   },
   startButton: {
     borderColor: 'green'
+  },
+  stopButton: {
+    borderColor: '#CC0000'
   }
 
 });

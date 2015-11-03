@@ -83,20 +83,22 @@ var StopWatch = React.createClass({
       clearInterval(this.interval);
       this.setState({
         running: false,
-        lapNumber: null
       });
-
       return; 
     }
 
-    this.setState({startTime: new Date() });
+    this.setState({
+      startTime: new Date(),
+      laps: [],
+      lapNumber: 1
+    });
     
     this.interval = setInterval( () => {
       // only set values in state with setState
       // never declare as 'this.state.variable = new value' <= antipattern!
       this.setState({
         timeElapsed: new Date() - this.state.startTime,
-        running: true
+        running: true,
       });
     }, 30);
   },
@@ -117,11 +119,11 @@ var StopWatch = React.createClass({
     return(
       this.state.laps.map(function(time, index){
         return (
-          <View>
-            <Text>
+          <View style={styles.lap}>
+            <Text style={styles.lapText}>
               Lap #{index + 1}
             </Text>
-            <Text>
+            <Text style={styles.lapText}>
               {formatTime(time)}
             </Text>
           </View>
@@ -175,6 +177,13 @@ var styles = StyleSheet.create({
   },
   stopButton: {
     borderColor: '#CC0000'
+  },
+  lap: {
+    justifyContent: 'space-around',
+    flexDirection: 'row'
+  }, 
+  lapText: {
+    fontSize: 30
   }
 
 });
